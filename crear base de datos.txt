@@ -5,5 +5,6 @@ put 'calidadaire:mediciones','20150101','trafico:totalvehiculostunel',0.0
 put 'calidadaire:mediciones','20150101','trafico:totalvehiculoscalle30',0.0
 put 'calidadaire:mediciones','20150101','trafico:velocidadmediasuperficie',0.0
 put 'calidadaire:mediciones','20150101','trafico:velocidadmediatunel',0.0
+get 'calidadaire:mediciones','20150101'
 
 
