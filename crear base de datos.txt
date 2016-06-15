@@ -301,9 +301,13 @@ put 'calidadaire:medicion_tiempo','20150101','temperatura_minima:5',10.0
 put 'calidadaire:medicion_tiempo','20150101','precipitaciones:6',60
 put 'calidadaire:medicion_tiempo','20150101','estado_cielo:6','Despejado'
 put 'calidadaire:medicion_tiempo','20150101','viento:6',8.0
+put 'calidadaire:medicion_tiempo','20150101','temperatura_maxima:6',20.0
+put 'calidadaire:medicion_tiempo','20150101','temperatura_minima:6',10.0
+put 'calidadaire:medicion_tiempo','20150101','precipitaciones:7',60
+put 'calidadaire:medicion_tiempo','20150101','estado_cielo:7','Despejado'
+put 'calidadaire:medicion_tiempo','20150101','viento:7',8.0
 put 'calidadaire:medicion_tiempo','20150101','temperatura_maxima:7',20.0
 put 'calidadaire:medicion_tiempo','20150101','temperatura_minima:7',10.0
-
 
 
 
