@@ -1,0 +1,14 @@
+create_namespace 'calidadaire'
+create 'calidadaire:medicion_trafico','fecha_medicion','total_vehiculos_tunel', 'total_vehiculos_calle30','velocidad_media_superficie','velocidad_media_tunel'
+create 'calidadaire:medicion_aire','fecha','SO2', 'CO', 'NO2','PM2.5','PM10', 'NOx','O3','BEN'
+create 'calidadaire:medicion_tiempo','fecha_medicion','precipitaciones','estado_cielo','viento','temperatura_maxima','temperatura_minima'
+####comandos que pueden ser de ayuda####
+#para borrar una tabla
+disable 'calidadaire:medicion_aire'
+drop 'calidadaire:medicion_aire'
+#para listar todas las tablas (shell)
+list
+#para ver caracteristicas de las tablas (shell)
+describe 'namespace:tabla'
+#para ver el contenido de las tablas (shell)
+scan 'namespace:tabla'
