@@ -23,7 +23,7 @@ def connect_to_hbase():
     return conn, batch
 
 #funcion para meter los datos
-def insert_row(batch, row):
+def insert_row(batch, row, hour):
     """ Insert a row into HBase.
     Write the row to the batch. When the batch size is reached, rows will be
     sent to the database.
@@ -31,8 +31,8 @@ def insert_row(batch, row):
         [ total_vehiculos_tunel:0-23,total_vehiculos_calle30:0-23,
         velocidad_media_superficie:0-23,velocidad_media_tunel:0-23 ]
     """
-    batch.put(row[0],{"total_vehiculos_tunel:0":row[1],"total_vehiculos_calle30:0":row[2],"velocidad_media_superficie:0":row[3],"velocidad_media_tunel:0":row[4]})
-
+    texto = ['total_vehiculos_tunel:',+hour,'total_vehiculos_calle30:'+hour,'velocidad_media_superficie:'+hour,'velocidad_media_tunel:'+hour]
+    batch.put(row[0],{texto[0]:row[1],texto[1]:row[2],texto[2]:row[3],texto[3]:row[4]})
 ## para coger todos los archivos de la carpeta
 conn_hdfs = hdfs.fs.hdfs()
 auxiliar =  conn_hdfs.list_directory("/user/datostrafico/sin_tratar/")
@@ -85,9 +85,12 @@ for k in archivos:
     table_name = "medicion_trafico"
     # After everything has been defined, run the script.
     conn, batch = connect_to_hbase()
+    #tenemos que coger la hora para asi ponerlo en el put a HBase
+    aux_hora = int(troceo[1].split('.')[0])
+    hora = str(aux_hora/100)
     print "Connect to HBase. table name: %s, batch size: %i" % (table_name, batch_size)
     try:
-        insert_row(batch, fila)
+        insert_row(batch, fila, hora)
         batch.send()
     finally:
         # No matter what happens, close the file handle.
