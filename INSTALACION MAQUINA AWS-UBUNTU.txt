@@ -1,0 +1,195 @@
+##### INSTALACION DESDE 0 DEL TFM EN UBUNTU AWS #####
+USUARIO: UBUNTU
+PASS:UBUNTU
+** INSTALACION JAVA
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java7-installer
+java -version
+(RUTA: /usr/lib/jvm/java-7-oracle)
+** INSTALACION HADOOP !! CUIDADO CAMBIAR BIGDATA -> UBUNTU!!!
+wget http://apache.rediris.es/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+tar xfz hadoop-2.7.1.tar.gz
+mv hadoop-2.7.1 /home/ubuntu/hadoop
+sudo apt-get update
+sudo apt-get install ssh
+sudo apt-get install rsync
+ssh-keygen -t rsa -P ''
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+nano ~/.bashrc
+->
+#HADOOP VARIABLES START
+export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+export HADOOP_HOME=/home/ubuntu/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/sbin
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export HADOOP_YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
+#HADOOP VARIABLES END
+->
+source ~/.bashrc
+$HADOOP_HOME
+nano /home/ubuntu/hadoop/etc/hadoop/core-site.xml
+->
+<configuration>
+<property>
+<name>fs.default.name</name>
+<value>hdfs://localhost:9000</value>
+</property>
+</configuration>
+->
+nano /home/ubuntu/hadoop/etc/hadoop/hadoop-env.sh
+->
+export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+->
+mkdir -p /home/ubuntu/hadoop_store/hdfs/namenode
+mkdir -p /home/ubuntu/hadoop_store/hdfs/datanode
+nano /home/ubuntu/hadoop/etc/hadoop/hdfs-site.xml
+->
+<configuration>
+<property>
+<name>dfs.replication</name>
+<value>1</value>
+</property>
+<property>
+<name>dfs.namenode.name.dir</name>
+<value>file:/home/ubuntu/hadoop_store/hdfs/namenode</value>
+</property>
+<property>
+<name>dfs.datanode.data.dir</name>
+<value>file:/home/ubuntu/hadoop_store/hdfs/datanode</value>
+</property>
+</configuration>
+->
+cp /home/ubuntu/hadoop/etc/hadoop/mapred-site.xml.template /home/ubuntu/hadoop/etc/hadoop/mapred-site.xml
+nano /home/ubuntu/hadoop/etc/hadoop/mapred-site.xml
+->
+<configuration>
+<property>
+<name>mapreduce.framework.name</name>
+<value>yarn</value>
+</property>
+</configuration>
+->
+nano /home/ubuntu/hadoop/etc/hadoop/yarn-site.xml
+->
+<configuration>
+<property>
+<name>yarn.nodemanager.aux-services</name>
+<value>mapreduce_shuffle</value>
+</property>
+<property>
+<name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+<value>org.apache.hadoop.mapred.ShuffleHandler</value>
+</property>
+</configuration>
+->
+hdfs namenode -format
+start-dfs.sh
+** INSTALACION PYTHON,ANACONDA,PANDAS,NUMPY Y PYDOOP
+sudo add-apt-repository ppa:fkrull/deadsnakes
+sudo apt-get update
+sudo apt-get install python 2.7
+wget https://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86.sh
+bash Anaconda2-4.1.1-Linux-x86.sh
+nano ~/.bashrc
+->
+#python variable start
+export PATH="/home/ubuntu/anaconda2/bin:$PATH"
+#python variable end
+->
+source ~/.bashrc
+sudo apt-get -y install build-essential python-dev
+sudo apt-get install python-pip
+pip install pydoop --- Algo falla!!!!!!
+-- despues de que falle
+sudo apt-get -y install build-essential python-dev
+sudo bash    # To avoid sudo pip install not geting the env variables
+export HADOOP_HOME=/home/ubuntu/hadoop-2.6.0
+export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+pip install pydoop
+INSTALACION happybase
+pip install happybase
+** INSTALACION HBASE
+wget https://archive.apache.org/dist/hbase/1.1.2/hbase-1.1.2-bin.tar.gz
+tar xzvf hbase-1.1.2-bin.tar.gz
+mv hbase-1.1.2 hbase
+cd hbase
+ls
+cd conf
+sudo nano hbase-site.xml
+->
+<configuration>
+<property>
+<name>hbase.rootdir</name>
+<value>file:///home/ubuntu/hbase</value>
+</property>
+<property>
+<name>hbase.zookeeper.property.dataDir</name>
+<value>/home/ubuntu/zookeeper</value>
+</property>
+</configuration>
+->
+sudo nano ~/.bashrc
+->
+# Rutas de HBase
+export HBASE_HOME=/home/ubuntu/hbase
+export PATH=$PATH:/$HBASE_HOME/lib
+export PATH=$PATH:/$HBASE_HOME/bin
+# Fin Rutas de HBase
+->
+source ~/.bashrc
+start-hbase.sh
+hbase shell
+(shell)status
+(shell)exit
+** INSTALACION THRIFT
+sudo apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libboost-system-dev libboost-filesystem-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev
+cd /tmp
+curl http://archive.apache.org/dist/thrift/0.9.1/thrift-0.9.1.tar.gz | tar zx
+cd thrift-0.9.1/
+./configure
+make
+sudo make install
+thrift --help
+hbase thrift start -threadpool (se queda en primer plano lanzado)
+
+############ TERMINADO LA INSTALACION, COSAS QUE ADAPTAR ########
+-> Rutas en los scrips. Cambiar borja por ubuntu
+-> De los archivos inserthbase en ppio no hay que cambiar nada
+-> Crear toda el sistema de directorios de hdfs:
+hdfs dfs -mkdir /user
+hdfs dfs -mkdir /user/datosaire
+hdfs dfs -mkdir /user/datosaire/sin_tratar
+hdfs dfs -mkdir /user/datosaire/tratado
+hdfs dfs -mkdir /user/datostiempo
+hdfs dfs -mkdir /user/datostiempo/sin_tratar
+hdfs dfs -mkdir /user/datostiempo/tratado
+hdfs dfs -mkdir /user/datostrafico
+hdfs dfs -mkdir /user/datostrafico/sin_tratar
+hdfs dfs -mkdir /user/datostrafico/tratado
+-> Crear las tablas de hbase
+hbase shell
+create_namespace 'calidadaire'
+create 'calidadaire:medicion_trafico','fecha_medicion','total_vehiculos_tunel', 'total_vehiculos_calle30','velocidad_media_superficie','velocidad_media_tunel'
+create 'calidadaire:medicion_aire','fecha','SO2', 'CO', 'NO2','PM2.5','PM10', 'NOx','O3','BEN'
+create 'calidadaire:medicion_tiempo','fecha_medicion','precipitaciones','estado_cielo','viento','temperatura_maxima','temperatura_minima'
+-> Recordar que para hacer la prueba de ejecutar los inserthbase tenemos que tener corriendo thrift
+quizas con esto se quede en background (iendo a /home/ubuntu/hbase/bin y luego hbase-daemon.sh start thrift)
+-> Cambiar con chmod todos los .sh  y .py de las carpetas documentos
+-> Crear los scripts con nano (nombrearchivo). Una vez abiertos coger los archivos de github y copiar y pegar.
+-> Para que funcionen los .sh que corremos en crontab poner debajo de #! /bin/bash:
+export JAVA_HOME=/usr/lib/jvm/java-7-oracle
+export HADOOP_HOME=/home/ubuntu/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/sbin
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export HADOOP_YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
