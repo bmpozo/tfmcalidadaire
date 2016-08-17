@@ -127,4 +127,4 @@ for k in archivos:
         # No matter what happens, close the file handle.
         conn.close()
     #finalmente movemos el archivo a a ya tratado
-    hdfs.move("/user/datostrafico/sin_tratar/"+k, "/user/datostrafico/tratado/")
+    hdfs.move("/user/datostiempo/sin_tratar/"+k, "/user/datostiempo/tratado/")
