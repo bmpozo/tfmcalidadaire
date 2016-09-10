@@ -1,0 +1,50 @@
+#instalar hbase
+
+#descargar tar
+wget https://archive.apache.org/dist/hbase/1.1.2/hbase-1.1.2-bin.tar.gz
+
+#exportar tar
+tar xzvf hbase-1.1.2-bin.tar.gz
+
+#mover archivos a nueva carpeta
+mv hbase-1.1.2 hbase
+
+cd hbase
+ls
+cd conf
+
+#configurar
+sudo nano hbase-site.xml
+#sustituir
+<configuration>
+<property><name>hbase.rootdir</name><value>file:///home/borja/hbase</value></property><property><name>hbase.zookeeper.property.dataDir</name><value>/home/borja/zookeeper</value></property>
+</configuration>
+#--------------
+
+#crear rutas 
+sudo nano ~/.bashrc
+# Rutas de HBase
+export HBASE_HOME=/home/borja/hbase
+export PATH=$PATH:/$HBASE_HOME/lib
+export PATH=$PATH:/$HBASE_HOME/bin
+# Fin Rutas de HBase
+
+source ~/.bashrc
+cd /home/borja
+
+#iniciar hbase
+start-hbase.sh
+
+#pruebas
+hbase shell
+status
+exit
+
+#cerramos
+stop-hbase.sh
+stop-dfs.sh
+
+
+
+
+
